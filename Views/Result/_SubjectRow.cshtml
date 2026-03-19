@@ -1,0 +1,21 @@
+﻿@model BSEBAnnualResultsMVC.Models.SubjectDetail
+@{
+    var isCCE = ViewData["IsCCEMarks"] != null && (int)ViewData["IsCCEMarks"] == 1;
+}
+
+<tr>
+    <td>@Model.Sub</td>
+    <td>@Model.MaxMark</td>
+    <td>@Model.PassMark</td>
+    <td>@Model.Theory</td>
+    <td>@Model.OB_PR</td>
+    @* <td>@Model.Practical</td> *@
+    @if (isCCE)
+    {
+        <td>@Model.CCEMarks</td>
+    }
+ 
+    <td>@(Model.GRC_THO == "0" ? "" : Model.GRC_THO)</td>
+    <td>@(Model.GRC_PR == "0" ? "" : Model.GRC_PR)</td>
+    <td>@Model.TOT_SUB</td>
+</tr>
