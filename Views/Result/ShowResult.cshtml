@@ -1,0 +1,215 @@
+﻿@model BSEBAnnualResultsMVC.Models.ResultViewModel
+@{
+    ViewBag.Title = "BSEB Result";
+    var s = Model.Student;
+}
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid black; padding: 7px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .text_center th, .text_center td { text-align: center; }
+    .watermark {
+        position: fixed; top: 40%; left: 50%;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        font-size: 70px; font-weight: bold;
+        color: rgba(0,0,0,0.15); z-index: 9999;
+        white-space: nowrap; pointer-events: none;
+    }
+    .noprint { display:inline-block; padding:10px 20px;
+               background:#28a745; color:white;
+               border:none; cursor:pointer; border-radius:5px; }
+    @@media print { .noprint { display:none; } }
+</style>
+
+<div class="watermark">WEB COPY</div>
+
+<center>
+    <button class="noprint" onclick="window.print()">PRINT</button>
+
+    <div style="width:80%; margin:auto;" id="pagewrap">
+        <table>
+            <!-- HEADER -->
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td style="border:1px solid #000; text-align:center; width:100px;">
+                                <img src="~/img/logo.png" style="width:80px;" alt="BSEB" />
+                            </td>
+                            <td style="border:1px solid #000; text-align:center;">
+                                <h3>Bihar School Examination Board</h3>
+                                <p><strong>RESULT</strong></p>
+                                <h4>INTERMEDIATE ANNUAL EXAMINATION-2026</h4>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <!-- STUDENT INFO -->
+            <tr>
+                <td>
+                    <table>
+                        <tr><td>BSEB Unique Id</td>
+                            <td>@s.BsebUniqueID</td></tr>
+                        <tr><td>Student's Name</td>
+                            <td>@s.NameoftheCandidate</td></tr>
+                        <tr><td>Father's Name</td>
+                            <td>@s.FathersName</td></tr>
+                        <tr><td>School/College Name</td>
+                            <td>@s.CollegeName</td></tr>
+                        <tr><td>Roll Code</td>
+                            <td>@s.RollCode</td></tr>
+                        <tr><td>Roll Number</td>
+                            <td>@s.RollNo</td></tr>
+                        <tr><td>Registration Number</td>
+                            <td>@s.RegistrationNo</td></tr>
+                        <tr><td>Faculty</td>
+                            <td>@s.FACULTY</td></tr>
+                    </table>
+                </td>
+            </tr>
+
+            <!-- MARKS HEADER -->
+            <tr>
+                <td><strong>Marks Details</strong></td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="text_center">
+                        <tr>
+                            <th rowspan="2">Subject</th>
+                            <th rowspan="2">Full Marks</th>
+                            <th rowspan="2">Pass Marks</th>
+                            <th rowspan="2">Theory</th>
+                            <th rowspan="2">Practical</th>
+                            @if (Model.Student.IsCCEMarks == 1)
+                            {
+                                <th rowspan="2">CCE</th>
+                            }
+                            <th colspan="2">Regulation</th>
+                            <th rowspan="2">Subject Total</th>
+                        </tr>
+                        <tr>
+                            <th>Th.</th>
+                            <th>Pr.</th>
+                        </tr>
+
+                        @* ── COMPULSORY ── *@
+                        @if (Model.CompulsorySubjects.Any())
+                        {
+                            <tr>
+                                <td colspan="8"><strong>1. अनिवार्य (Compulsory)</strong></td>
+                            </tr>
+                          @*   foreach (var sub in Model.CompulsorySubjects)
+                            {
+                                @Html.Partial("_SubjectRow", sub)
+                            } *@
+
+                            @foreach (var sub in Model.CompulsorySubjects)
+                            {
+                                @Html.Partial("_SubjectRow", sub, new ViewDataDictionary(ViewData)
+                                {
+                                    { "IsCCEMarks", Model.Student.IsCCEMarks }
+                                })
+                            }
+                        }
+
+                        @* ── ELECTIVE ── *@
+                        @if (Model.ElectiveSubjects.Any())
+                        {
+                            <tr>
+                                <td colspan="8"><strong>2. ऐच्छिक (Elective)</strong></td>
+                            </tr>
+                           @*  foreach (var sub in Model.ElectiveSubjects)
+                            {
+                                @Html.Partial("_SubjectRow", sub)
+                            } *@
+                            @foreach (var sub in Model.ElectiveSubjects)
+                            {
+                                @Html.Partial("_SubjectRow", sub, new ViewDataDictionary(ViewData)
+                                {
+                                    { "IsCCEMarks", Model.Student.IsCCEMarks }
+                                })
+                            }
+                        }
+
+                        @* ── ADDITIONAL ── *@
+                        @if (Model.AdditionalSubjects.Any())
+                        {
+                            <tr>
+                                <td colspan="8"><strong>3. अतिरिक्त Additional</strong></td>
+                            </tr>
+                           @*  foreach (var sub in Model.AdditionalSubjects)
+                            {
+                                @Html.Partial("_SubjectRow", sub)
+                            } *@
+
+                            @foreach (var sub in Model.AdditionalSubjects)
+                            {
+                                @Html.Partial("_SubjectRow", sub, new ViewDataDictionary(ViewData)
+                                {
+                                    { "IsCCEMarks", Model.Student.IsCCEMarks }
+                                })
+                             }
+                        }
+
+                        @* ── VOCATIONAL ── *@
+                        @if (Model.VocationalSubjects.Any())
+                        {
+                            <tr>
+                                <td colspan="8"><strong>Vocational Trade</strong></td>
+                            </tr>
+                            @foreach (var sub in Model.VocationalSubjects)
+                            {
+                                @Html.Partial("_SubjectRow", sub, new ViewDataDictionary(ViewData)
+                                {
+                                    { "IsCCEMarks", Model.Student.IsCCEMarks }
+                                })
+                            }
+                        }
+                    </table>
+                </td>
+            </tr>
+
+            <!-- FINAL RESULT -->
+            <tr>
+                <td>
+                    <table>
+                        <tr><td colspan="2"><strong>Final Result:</strong></td></tr>
+                        <tr>
+                            <td style="width:20%;"><strong>Aggregate Marks:</strong></td>
+                            <td>@s.TotalAggregateMarkinNumber</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Result/Division:</strong></td>
+                            <td>@s.DIVISION</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <!-- ABBREVIATIONS -->
+            <tr>
+                <td style="text-align:center; text-decoration:underline;">
+                    <strong>Abbreviations Used:</strong>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td>* - Grace</td>
+                            <td>@@ - Swapping</td>
+                            <td># - Greater Marks of Last Year</td>
+                            <td>D - Distinction</td>
+                            <td>F - Fail</td>
+                            <td>U/R - Under Regulation</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</center>
