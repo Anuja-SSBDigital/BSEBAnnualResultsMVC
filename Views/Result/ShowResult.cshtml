@@ -4,30 +4,208 @@
     var s = Model.Student;
 }
 <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid black; padding: 7px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    .text_center th, .text_center td { text-align: center; }
-    .watermark {
-        position: fixed; top: 40%; left: 50%;
-        transform: translate(-50%, -50%) rotate(-30deg);
-        font-size: 70px; font-weight: bold;
-        color: rgba(0,0,0,0.15); z-index: 9999;
-        white-space: nowrap; pointer-events: none;
-    }
-    .noprint { display:inline-block; padding:10px 20px;
-               background:#28a745; color:white;
-               border:none; cursor:pointer; border-radius:5px; }
-    @@media print { .noprint { display:none; } }
-</style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
 
-<div class="watermark">WEB COPY</div>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            /*border: 2px solid black;*/
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+            .logo img {
+                width: 80px;
+            }
+
+        .marksheet {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+            .marksheet, .marksheet th, .marksheet td {
+                border: 1px solid black;
+            }
+
+                .marksheet th, .marksheet td {
+                    padding: 10px;
+                    text-align: center;
+                }
+
+        .subject-group {
+            text-align: left;
+            font-weight: bold;
+            background-color: #e0e0e0;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 70px;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            white-space: nowrap;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .watermark-subtext {
+            display: block;
+            font-size: 20px;
+            font-weight: normal;
+            margin-top: 10px;
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        @page {
+            margin: 10px 20px;
+        }
+
+        .print-btn-container {
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .noprint {
+            display: inline-block;
+            width: 120px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+         .backtoprint {
+     display: inline-block;
+     width: 120px;
+     padding: 10px;
+     font-size: 16px;
+     background-color: #ea4635;
+     color: white;
+     border: none;
+     cursor: pointer;
+     border-radius: 5px;
+ }
+
+        .text_center th,
+        .text_center td {
+            text-align: center;
+        }
+
+        .bottom-tag {
+            display: none; /* hide on screen */
+        }
+
+        .bottom-tag {
+            width: 100%;
+            text-align: right;
+            font-size: 10px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        @media print {
+            .bottom-tag {
+                display: block;
+                position: fixed;
+                bottom: 5px;
+                right: 10px;
+                font-size: 8px;
+                font-weight: bold;
+                color: #000;
+            }
+        }
+
+    </style>
+<script type="text/javascript">
+            //with watermark
+            function printDiv(divName) {
+                var printContents = document.getElementById(divName).innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                // Append watermark inside the print area
+                var watermarkDiv = document.createElement("div");
+                watermarkDiv.className = "watermark";
+                watermarkDiv.innerHTML = `
+                WEB COPY
+               <span class="watermark-subtext">
+        1. Bihar School Examination Board, Patna is not responsible for any <br>
+        inadvertent error that may have crept in the results being published <br>
+        on the NET. <br>
+        2. The results published on the NET are for immediate information to <br>
+        the examinees. <br>
+        3. This is not a valid document.
+    </span>
+            `;
+
+                document.getElementById(divName).appendChild(watermarkDiv);
+                // Set body content to the print section
+                document.body.innerHTML = document.getElementById(divName).innerHTML;
+                window.print();
+
+                // Restore original content
+                document.body.innerHTML = originalContents;
+            }
+
+</script>
 
 <center>
-    <button class="noprint" onclick="window.print()">PRINT</button>
+    <button class="noprint btn btn-success" onclick="printDiv('pagewrap')" style="display: block; width: 100px; cursor: pointer">PRINT</button>
 
-    <div style="width:80%; margin:auto;" id="pagewrap">
+    <div id="pagewrap">
         <table>
             <!-- HEADER -->
             <tr>
