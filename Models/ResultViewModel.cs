@@ -39,5 +39,6 @@
         public string? TOT_SUB { get; set; }
         public string? CCEMarks { get; set; }
         public string? SubjectGroupName { get; set; }
+        public string? Dist { get; set; }
     }
 }
