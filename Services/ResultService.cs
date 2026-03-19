@@ -58,10 +58,10 @@ namespace BSEBAnnualResultsMVC.Services
                 };
 
                 // Filter by SubjectGroupName (SP's 4 SELECT queries)
-                var compulsory = FilterSubjects(allRows, "1. अनिवार्य Compulsory");
-                var elective = FilterSubjects(allRows, "2. ऐच्छिक Elective");
-                var additional = FilterSubjects(allRows, "3. अतिरिक्त Additional");
-                var vocational = FilterSubjects(allRows,"Additional subject group Vocational (100 marks)");
+                var compulsory = FilterSubjects(allRows, "1. अनिवार्य Compulsory", isVocational: false);
+                var elective = FilterSubjects(allRows, "2. ऐच्छिक Elective", isVocational: false);
+                var additional = FilterSubjects(allRows, "3. अतिरिक्त Additional", isVocational: false);
+                var vocational = FilterSubjects(allRows,"Additional subject group Vocational (100 marks)", isVocational: true);
 
                 return new ResultViewModel
                 {
@@ -102,7 +102,7 @@ namespace BSEBAnnualResultsMVC.Services
         }
 
         // SP's IIF and CONCAT TOT_SUB logic moved to C#
-        private List<SubjectDetail> FilterSubjects(List<ExamFinalPublishedResult> allRows, string groupName)
+        private List<SubjectDetail> FilterSubjects(List<ExamFinalPublishedResult> allRows, string groupName, bool isVocational)
         {
             try
             {
@@ -124,10 +124,12 @@ namespace BSEBAnnualResultsMVC.Services
                     GRC_PR = (r.PracticalGraceMarks == null || r.PracticalGraceMarks == 0) ? "" : r.PracticalGraceMarks.ToString(),
 
                     // CONCAT(SubjectTotal, PassWithGrace, IsImproved, IsSwapped)
-                    TOT_SUB = BuildSubjectTotal(r),
-
+                    //TOT_SUB = BuildSubjectTotal(r),
+                    // ✅ Choose correct TOT_SUB logic based on group // SP branch 4 logic
+                    TOT_SUB = isVocational ? BuildSubjectTotalVocational(r) : BuildSubjectTotal(r), // SP branch 1/2/3 logic
                     CCEMarks = r.CCEMarks?.ToString(),
-                    SubjectGroupName = r.SubjectGroupName
+                    SubjectGroupName = r.SubjectGroupName,
+                    Dist = r.Dist
                 })
               .ToList();
             }
@@ -145,15 +147,19 @@ namespace BSEBAnnualResultsMVC.Services
             try
             {
                 string tot = r.SubjectTotal ?? "";
-
+                string dist = (!string.IsNullOrEmpty(r.Dist)) ? " " + r.Dist : "";
                 string grace = (!string.IsNullOrEmpty(r.PassWithGrace)) ? " " + r.PassWithGrace : "";
 
                 string improved = (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) ? " " + r.IsImproved : "";
 
                 string swapped = (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped)) ? " " + r.IsSwapped : "";
+                // If any of those exist, skip Dist (match SP commented-out logic)
+                bool hasOverride = !string.IsNullOrEmpty(r.PassWithGrace) || (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) || (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped));
+                string distFinal = hasOverride ? "" : dist;
 
+                return $"{tot}{distFinal}{grace}{improved}{swapped}".Trim();
                 //string swapped = (r.IsSwappedT == 1 && !string.IsNullOrEmpty(r.IsSwapped)) ? " " + r.IsSwapped : "";
-                return $"{tot}{grace}{improved}{swapped}";
+                //return $"{tot}{grace}{improved}{swapped}";
             }
             catch (Exception ex)
             {
@@ -161,6 +167,21 @@ namespace BSEBAnnualResultsMVC.Services
                 throw;
             }
          
+        }
+
+        // ✅ SP Branch 4 logic — Vocational
+        // SubjectTotal + CASE WHEN Grace>0 THEN '' ELSE Dist END
+        private string BuildSubjectTotalVocational(ExamFinalPublishedResult r)
+        {
+            string tot = r.SubjectTotal ?? "";
+
+            bool hasGrace = (r.TheoryGraceMarks.HasValue && r.TheoryGraceMarks.Value > 0) ||
+                            (r.PracticalGraceMarks.HasValue && r.PracticalGraceMarks.Value > 0);
+
+            // SP: CASE WHEN Grace>0 THEN '' ELSE Dist END
+            string dist = hasGrace ? "" : (r.Dist ?? "");
+
+            return $"{tot} {dist}".Trim();
         }
     }
 }
