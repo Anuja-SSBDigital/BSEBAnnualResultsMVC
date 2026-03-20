@@ -150,14 +150,23 @@ namespace BSEBAnnualResultsMVC.Services
                 string dist = (!string.IsNullOrEmpty(r.Dist)) ? " " + r.Dist : "";
                 string grace = (!string.IsNullOrEmpty(r.PassWithGrace)) ? " " + r.PassWithGrace : "";
 
-                string improved = (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) ? " " + r.IsImproved : "";
+                //string improved = (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) ? " " + r.IsImproved : "";
+                string improved = (string.Equals(r.CategoryName, "Improvement", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(r.IsImproved)) ? " " + r.IsImproved : "";
 
                 string swapped = (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped)) ? " " + r.IsSwapped : "";
                 // If any of those exist, skip Dist (match SP commented-out logic)
                 bool hasOverride = !string.IsNullOrEmpty(r.PassWithGrace) || (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) || (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped));
                 string distFinal = hasOverride ? "" : dist;
 
-                return $"{tot}{distFinal}{grace}{improved}{swapped}".Trim();
+               
+                //if (grace == "*")
+                //{
+                    return $"{tot}{distFinal}{grace}{improved}{swapped}".Trim();
+                //}
+                //else
+                //{
+                //    return $"{tot}{distFinal}{improved}{swapped}".Trim();
+                //}
                 //string swapped = (r.IsSwappedT == 1 && !string.IsNullOrEmpty(r.IsSwapped)) ? " " + r.IsSwapped : "";
                 //return $"{tot}{grace}{improved}{swapped}";
             }
