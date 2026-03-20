@@ -441,8 +441,24 @@
     }
 </script>
 <center>
-    <button class="noprint btn btn-success" onclick="printDiv()" style="width:120px;padding: 5px;    margin-bottom: 4px; background:#94e609; color:#fff;border:2px solid #94e609;border-radius:6px; font-weight:600;">PRINT</button>
-    <button class="noprintinside btn btn-success" onclick="printDiv();" style="width:120px;padding: 5px;     margin-bottom: 4px;background:#94e609; color:#fff;border:2px solid #94e609;border-radius:6px; font-weight:600;">PRINT</button>
+    <button class="noprint btn btn-success" onclick="printDiv()"
+            style="
+        width: 120px;
+        padding: 5px;
+        margin-bottom: 4px;
+        background: #28a745; /* Green color */
+        color: #fff; /* White text */
+        border: 2px solid #28a745; /* Green border */
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    "
+            onmouseover="this.style.background='#218838'; this.style.borderColor='#218838';"
+            onmouseout="this.style.background='#28a745'; this.style.borderColor='#28a745';">
+        PRINT
+    </button>
+    <button class="noprintinside btn btn-success" onclick="printDiv();" style="width:120px;padding: 5px;     margin-bottom: 4px;background:#28a745; color:#fff;border:2px solid #28a745;border-radius:6px; font-weight:600;">PRINT</button>
     <button class="noprintinside btn btn-secondary" onclick="goBack()" style="width:120px;    padding: 5px;    margin-bottom: 4px; background:#6c757d; color:#fff;border-radius:6px; font-weight:600;"> BACK </button>
     <button class="noprint btn btn-secondary" onclick="goBack()" style="width:120px;    padding: 5px;    margin-bottom: 4px; background:#6c757d; color:#fff;border-radius:6px; font-weight:600;"> BACK </button>
 </center>
