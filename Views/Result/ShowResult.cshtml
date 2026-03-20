@@ -390,11 +390,18 @@
         border-radius: 5px;
     }
 
-    .text_center th,
+   /*  .text_center th,
     .text_center td {
         text-align: center;
+    } */
+    .subject-group-header {
+        text-align: left !important;
     }
 
+    .text_center th,
+    .text_center td:not(.subject-group-header) {
+        text-align: center;
+    }
     .bottom-tag {
         display: none; /* hide on screen */
     }
@@ -429,11 +436,16 @@
 
         window.print();
     }
+      function goBack() {
+        window.location.href = '@Url.Action("Index", "Result")'; // change controller if needed
+    }
 </script>
-
-<button class="noprint btn btn-success" onclick="printDiv()" style="display: block; width: 100px; cursor: pointer">PRINT</button>
-<button class="noprintinside btn btn-success" onclick="printDiv();" style="display: block; width: 100px; cursor: pointer">PRINT</button>
-
+<center>
+    <button class="noprint btn btn-success" onclick="printDiv()" style="width:120px;padding: 5px;    margin-bottom: 4px; background:#94e609; color:#fff;border:2px solid #94e609;border-radius:6px; font-weight:600;">PRINT</button>
+    <button class="noprintinside btn btn-success" onclick="printDiv();" style="width:120px;padding: 5px;     margin-bottom: 4px;background:#94e609; color:#fff;border:2px solid #94e609;border-radius:6px; font-weight:600;">PRINT</button>
+    <button class="noprintinside btn btn-secondary" onclick="goBack()" style="width:120px;    padding: 5px;    margin-bottom: 4px; background:#6c757d; color:#fff;border-radius:6px; font-weight:600;"> BACK </button>
+    <button class="noprint btn btn-secondary" onclick="goBack()" style="width:120px;    padding: 5px;    margin-bottom: 4px; background:#6c757d; color:#fff;border-radius:6px; font-weight:600;"> BACK </button>
+</center>
 <div id="pagewrap">
     <style>
         @@page {
@@ -501,9 +513,9 @@
                             <img src="~/img/logo.png" style="width:80px;" alt="BSEB" />
                         </td>
                         <td style="border:1px solid #000; text-align:center;">
-                            <h3>Bihar School Examination Board</h3>
-                            <p><strong>RESULT</strong></p>
-                            <h4>INTERMEDIATE ANNUAL EXAMINATION-2026</h4>
+                            <h3 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">Bihar School Examination Board</h3>
+                            <p style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">RESULT</p>
+                            <h4 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">INTERMEDIATE ANNUAL EXAMINATION-2026</h4>
                         </td>
                     </tr>
                 </table>
@@ -579,7 +591,8 @@
                     @if (Model.CompulsorySubjects.Any())
                     {
                         <tr>
-                            <td colspan="8"><strong>1. अनिवार्य (Compulsory)</strong></td>
+                            <td colspan="8" class="subject-group-header"><strong>1. अनिवार्य (Compulsory)</strong></td>
+
                         </tr>
                         @*   foreach (var sub in Model.CompulsorySubjects)
                             {
@@ -599,7 +612,7 @@
                     @if (Model.ElectiveSubjects.Any())
                     {
                         <tr>
-                            <td colspan="8"><strong>2. ऐच्छिक (Elective)</strong></td>
+                            <td colspan="8" class="subject-group-header"><strong>2. ऐच्छिक (Elective)</strong></td>
                         </tr>
                         @*  foreach (var sub in Model.ElectiveSubjects)
                             {
@@ -618,7 +631,7 @@
                     @if (Model.AdditionalSubjects.Any())
                     {
                         <tr>
-                            <td colspan="8"><strong>3. अतिरिक्त Additional</strong></td>
+                            <td colspan="8" class="subject-group-header"> <strong>3. अतिरिक्त Additional</strong> </td>
                         </tr>
                         @*  foreach (var sub in Model.AdditionalSubjects)
                             {
@@ -638,7 +651,7 @@
                     @if (Model.VocationalSubjects.Any())
                     {
                         <tr>
-                            <td colspan="8"><strong>Vocational Trade</strong></td>
+                            <td colspan="8" class="subject-group-header"><strong>Vocational Trade</strong></td>
                         </tr>
                         @foreach (var sub in Model.VocationalSubjects)
                         {
