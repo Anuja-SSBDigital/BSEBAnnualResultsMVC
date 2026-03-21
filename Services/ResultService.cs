@@ -61,7 +61,7 @@ namespace BSEBAnnualResultsMVC.Services
                 var compulsory = FilterSubjects(allRows, "1. अनिवार्य Compulsory", isVocational: false);
                 var elective = FilterSubjects(allRows, "2. ऐच्छिक Elective", isVocational: false);
                 var additional = FilterSubjects(allRows, "3. अतिरिक्त Additional", isVocational: false);
-                var vocational = FilterSubjects(allRows,"Additional subject group Vocational (100 marks)", isVocational: true);
+                var vocational = FilterSubjects(allRows, "Additional subject group Vocational (100 marks)", isVocational: true);
 
                 return new ResultViewModel
                 {
@@ -75,9 +75,10 @@ namespace BSEBAnnualResultsMVC.Services
             catch (Exception ex)
             {
 
-                throw;
+                throw new ApplicationException("Failed to load result data.", ex);
+
             }
-          
+
         }
 
         // SP DIVISION CONCAT CASE logic moved to C#
@@ -96,9 +97,9 @@ namespace BSEBAnnualResultsMVC.Services
             catch (Exception ex)
             {
 
-                throw;
+                return string.Empty;
             }
-         
+
         }
 
         // SP's IIF and CONCAT TOT_SUB logic moved to C#
@@ -136,9 +137,9 @@ namespace BSEBAnnualResultsMVC.Services
             catch (Exception ex)
             {
 
-                throw;
+                return new List<SubjectDetail>();
             }
-          
+
         }
 
         // SP's TOT_SUB CONCAT CASE logic
@@ -158,10 +159,10 @@ namespace BSEBAnnualResultsMVC.Services
                 bool hasOverride = !string.IsNullOrEmpty(r.PassWithGrace) || (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) || (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped));
                 string distFinal = hasOverride ? "" : dist;
 
-               
+
                 //if (grace == "*")
                 //{
-                    return $"{tot}{distFinal}{grace}{improved}{swapped}".Trim();
+                return $"{tot}{distFinal}{grace}{improved}{swapped}".Trim();
                 //}
                 //else
                 //{
@@ -173,24 +174,32 @@ namespace BSEBAnnualResultsMVC.Services
             catch (Exception ex)
             {
 
-                throw;
+                return r.SubjectTotal ?? "";
             }
-         
+
         }
 
         // ✅ SP Branch 4 logic — Vocational
         // SubjectTotal + CASE WHEN Grace>0 THEN '' ELSE Dist END
         private string BuildSubjectTotalVocational(ExamFinalPublishedResult r)
         {
-            string tot = r.SubjectTotal ?? "";
+            try
+            {
+                string tot = r.SubjectTotal ?? "";
 
-            bool hasGrace = (r.TheoryGraceMarks.HasValue && r.TheoryGraceMarks.Value > 0) ||
-                            (r.PracticalGraceMarks.HasValue && r.PracticalGraceMarks.Value > 0);
+                bool hasGrace = (r.TheoryGraceMarks.HasValue && r.TheoryGraceMarks.Value > 0) || (r.PracticalGraceMarks.HasValue && r.PracticalGraceMarks.Value > 0);
 
-            // SP: CASE WHEN Grace>0 THEN '' ELSE Dist END
-            string dist = hasGrace ? "" : (r.Dist ?? "");
+                // SP: CASE WHEN Grace>0 THEN '' ELSE Dist END
+                string dist = hasGrace ? "" : (r.Dist ?? "");
 
-            return $"{tot} {dist}".Trim();
+                return $"{tot} {dist}".Trim();
+            }
+            catch (Exception ex)
+            {
+
+                return r.SubjectTotal ?? "";
+            }
+          
         }
     }
 }
