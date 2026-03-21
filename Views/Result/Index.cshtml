@@ -319,8 +319,10 @@
 
         function showError(id, message) {
             const errorEl = document.getElementById(id);
-            errorEl.textContent = message;
-            errorEl.style.display = 'block';
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+            }
         }
 
         function hideAllErrors() {
@@ -329,20 +331,31 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        // Map input IDs to their corresponding error div IDs
+        const errorMap = {
+            'rollcode': 'rollcodeError',
+            'rollno': 'rollnoError',
+            'captchaInput': 'captchaError'
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
             generateCaptcha();
 
             // Live input validation
             document.querySelectorAll('.form-control').forEach(input => {
-                input.addEventListener('input', function() {
+                input.addEventListener('input', function () {
                     if (this.value.trim()) {
-                        document.getElementById(this.id + 'Error').style.display = 'none';
+                        const errorId = errorMap[this.id];
+                        if (errorId) {
+                            const errorEl = document.getElementById(errorId);
+                            if (errorEl) errorEl.style.display = 'none';
+                        }
                     }
                 });
             });
 
             // Form validation
-            document.getElementById('resultForm').onsubmit = function(e) {
+            document.getElementById('resultForm').onsubmit = function (e) {
                 let isValid = true;
                 hideAllErrors();
 
@@ -375,4 +388,18 @@
         });
     </script>
 </body>
+@if (TempData["SwalMessage"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: '@TempData["SwalType"]',
+                title: '@TempData["SwalTitle"]',
+                text: '@TempData["SwalMessage"]',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        });
+    </script>
+}
 </html>
