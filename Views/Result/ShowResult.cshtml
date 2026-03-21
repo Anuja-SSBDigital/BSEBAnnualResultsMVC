@@ -390,10 +390,10 @@
         border-radius: 5px;
     }
 
-   /*  .text_center th,
-    .text_center td {
-        text-align: center;
-    } */
+    /*  .text_center th,
+            .text_center td {
+                text-align: center;
+            } */
     .subject-group-header {
         text-align: left !important;
     }
@@ -402,30 +402,11 @@
     .text_center td:not(.subject-group-header) {
         text-align: center;
     }
-    .bottom-tag {
-        display: none; /* hide on screen */
-    }
 
-    .bottom-tag {
-        width: 100%;
-        text-align: right;
-        font-size: 10px;
-        font-weight: bold;
-        color: #555;
-        margin-top: 10px;
-    }
+   
 
     @@media print {
-        .bottom-tag {
-            display: block;
-            position: fixed;
-            bottom: 5px;
-            right: 10px;
-            font-size: 8px;
-            font-weight: bold;
-            color: #000;
-        }
-
+        
         .noprintinside {
             visibility: hidden;
         }
@@ -472,7 +453,6 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            
         }
 
         table {
@@ -719,5 +699,12 @@
             </td>
         </tr>
     </table>
+    <table>
+
+        <tr>
+            <td style="float: right; border: none; font-size: 7px;">SSBD</td>
+
+        </tr>
+    </table>
 </div>
-<div class="bottom-tag">SSBD</div>
+@* <div class="bottom-tag">SSBD</div> *@
