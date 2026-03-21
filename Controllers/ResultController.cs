@@ -29,8 +29,12 @@ namespace BSEBAnnualResultsMVC.Controllers
             {
                 if (string.IsNullOrWhiteSpace(rollcode) || string.IsNullOrWhiteSpace(rollno))
                 {
-                    ViewBag.Error = "Please enter Roll Code and Roll Number.";
-                    return View("Index");
+                    //ViewBag.Error = "Please enter Roll Code and Roll Number.";
+                    //return View("Index");
+                    TempData["SwalType"] = "warning";
+                    TempData["SwalTitle"] = "Missing Input";
+                    TempData["SwalMessage"] = "Please enter both Roll Code and Roll Number.";
+                    return RedirectToAction("Index");
                 }
 
 
@@ -38,8 +42,12 @@ namespace BSEBAnnualResultsMVC.Controllers
 
                 if (result == null)
                 {
-                    ViewBag.Error = "Invalid Login Details";
-                    return View("Index");
+                    //ViewBag.Error = "Invalid Login Details";
+                    //return View("Index");
+                    TempData["SwalType"] = "error";
+                    TempData["SwalTitle"] = "Not Found";
+                    TempData["SwalMessage"] = "No result found for the given Roll Code and Roll Number.";
+                    return RedirectToAction("Index");
                 }
 
                 // Store in TempData to pass to result page
@@ -51,7 +59,10 @@ namespace BSEBAnnualResultsMVC.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                TempData["SwalType"] = "error";
+                TempData["SwalTitle"] = "Server Error";
+                TempData["SwalMessage"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("Index");
             }
           
         }
@@ -73,7 +84,10 @@ namespace BSEBAnnualResultsMVC.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                TempData["SwalType"] = "error";
+                TempData["SwalTitle"] = "Server Error";
+                TempData["SwalMessage"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("Index");
             }
            
         }
