@@ -148,13 +148,20 @@ namespace BSEBAnnualResultsMVC.Services
             try
             {
                 string tot = r.SubjectTotal ?? "";
+                // ✅ SP Branch 2: WHEN CategoryName = 'COMPARTMENTAL'
+                // THEN CONCAT(SubjectTotal, ' ', ISNULL(IsCompartment, ''))
+                if (string.Equals(r.CategoryName, "COMPARTMENTAL", StringComparison.OrdinalIgnoreCase))
+                {
+                    string compartment = !string.IsNullOrEmpty(r.IsCompartment) ? " " + r.IsCompartment : "";
+                    return $"{tot}{compartment}".Trim();
+                }
                 string dist = (!string.IsNullOrEmpty(r.Dist)) ? " " + r.Dist : "";
                 string grace = (!string.IsNullOrEmpty(r.PassWithGrace)) ? " " + r.PassWithGrace : "";
 
                 //string improved = (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) ? " " + r.IsImproved : "";
                 string improved = (string.Equals(r.CategoryName, "Improvement", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(r.IsImproved)) ? " " + r.IsImproved : "";
-
-                string swapped = (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped)) ? " " + r.IsSwapped : "";
+                string swapped = !string.IsNullOrEmpty(r.IsSwapped) ? " " + r.IsSwapped : "";
+                //string swapped = (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped)) ? " " + r.IsSwapped : "";
                 // If any of those exist, skip Dist (match SP commented-out logic)
                 bool hasOverride = !string.IsNullOrEmpty(r.PassWithGrace) || (r.CategoryName == "Improvement" && !string.IsNullOrEmpty(r.IsImproved)) || (r.IsSwappedT == true && !string.IsNullOrEmpty(r.IsSwapped));
                 string distFinal = hasOverride ? "" : dist;
@@ -186,7 +193,13 @@ namespace BSEBAnnualResultsMVC.Services
             try
             {
                 string tot = r.SubjectTotal ?? "";
-
+                // ✅ SP Branch 2: WHEN CategoryName = 'COMPARTMENTAL'
+                // THEN CONCAT(SubjectTotal, ' ', ISNULL(IsCompartment, ''))
+                if (string.Equals(r.CategoryName, "COMPARTMENTAL", StringComparison.OrdinalIgnoreCase))
+                {
+                    string compartment = !string.IsNullOrEmpty(r.IsCompartment) ? " " + r.IsCompartment : "";
+                    return $"{tot}{compartment}".Trim();
+                }
                 bool hasGrace = (r.TheoryGraceMarks.HasValue && r.TheoryGraceMarks.Value > 0) || (r.PracticalGraceMarks.HasValue && r.PracticalGraceMarks.Value > 0);
 
                 // SP: CASE WHEN Grace>0 THEN '' ELSE Dist END
