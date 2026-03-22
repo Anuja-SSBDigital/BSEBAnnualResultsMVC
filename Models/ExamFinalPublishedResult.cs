@@ -52,5 +52,6 @@ namespace BSEBAnnualResultsMVC.Models
         public string? PassedUnderRegulation { get; set; }
         public string? ExamType { get; set; }
         public string? ImprovementRemark { get; set; }
+        public string? IsCompartment { get; set; }
     }
 }
