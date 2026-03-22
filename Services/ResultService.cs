@@ -20,12 +20,12 @@ namespace BSEBAnnualResultsMVC.Services
             try
             {
                 // Check if record exists (SP's EXISTS check)
-                bool exists = _db.FinalPublishedResults.Any(r => r.RollCode == rollCode && r.RollNumber == rollNo);
+                bool exists = _db.FinalPublishedResults.Any(r => r.RollCode == rollCode && r.RollNumber == rollNo && r.IsActive == true);
 
                 if (!exists) return null;
 
                 // Fetch all rows for this student in ONE DB call
-                var allRows = _db.FinalPublishedResults.Where(r => r.RollCode == rollCode && r.RollNumber == rollNo)
+                var allRows = _db.FinalPublishedResults.Where(r => r.RollCode == rollCode && r.RollNumber == rollNo && r.IsActive == true)
                     .ToList(); // Single DB hit — no server load
 
                 // Check CCEMarks (SP logic: IsCCEMarks)
@@ -36,7 +36,8 @@ namespace BSEBAnnualResultsMVC.Services
                 var first = allRows.First();
 
                 // Build DIVISION string (SP's CONCAT CASE logic)
-                string division = BuildDivision(first);
+                string division = BuildDivision(first, allRows);
+                //string division = BuildDivision(first);
 
                 // Build TotalAggregateMarkinNumber
                 string totalAgg = $"{first.TotalMarks} {first.IsDivisionGrace} ({first.TotalMarksInWords})";
@@ -81,32 +82,36 @@ namespace BSEBAnnualResultsMVC.Services
 
         }
         //new division logic 
-        private string BuildDivision(ExamFinalPublishedResult r)
+        private string BuildDivision(ExamFinalPublishedResult r, List<ExamFinalPublishedResult> allRows)
         {
             try
             {
-                // CASE WHEN IsTotalResultImproved = 1
-                if (r.IsTotalResultImproved == 1)
+                // MAX(PassedUnderRegulation) OVER (PARTITION BY RollCode, RollNumber)
+                string passedUnderReg = allRows.Where(x => x.RollCode == r.RollCode && x.RollNumber == r.RollNumber).Select(x => x.PassedUnderRegulation).Where(x => !string.IsNullOrEmpty(x)).OrderByDescending(x => x).FirstOrDefault() ?? "";
+
+                string regPart = !string.IsNullOrEmpty(passedUnderReg) ? " " + passedUnderReg : "";
+                string gracePart = !string.IsNullOrEmpty(r.DivisionGraceMarks) ? " +" + r.DivisionGraceMarks : "";
+
+                if (r.ExamType == "IMPROVEMENT" && r.IsTotalResultImproved == true)
                 {
-                    string gracePart = (!string.IsNullOrEmpty(r.DivisionGraceMarks))
-                        ? " +" + r.DivisionGraceMarks
-                        : "";
-
-                    return $"{r.Division} {r.PassedUnderRegulation}{gracePart} Improved".Trim();
+                    // WHEN ExamType = 'IMPROVEMENT' AND IsTotalResultImproved = 1
+                    return $"{r.Division}{regPart}{gracePart} Improved".Trim();
                 }
-
-                // WHEN IsTotalResultImproved = 0 OR IS NULL
-                if (r.IsTotalResultImproved == 0 || r.IsTotalResultImproved == null)
+                else if (r.ExamType == "IMPROVEMENT" && (r.IsTotalResultImproved == false || r.IsTotalResultImproved == null))
                 {
-                    return "Not Improved";
+                    // WHEN ExamType = 'IMPROVEMENT' AND (IsTotalResultImproved = 0 OR IS NULL)
+                    string regPartWrapped = !string.IsNullOrEmpty(passedUnderReg) ? $" ({passedUnderReg})" : "";
+                    return $"Not Improved{regPartWrapped}".Trim();
                 }
-
-                // ELSE ''
-                return string.Empty;
+                else
+                {
+                    // ELSE — normal case
+                    return $"{r.Division}{regPart}{gracePart}".Trim();
+                }
             }
             catch (Exception ex)
             {
-                return string.Empty;
+                throw;
             }
         }
         // SP DIVISION CONCAT CASE logic moved to C#
