@@ -80,27 +80,55 @@ namespace BSEBAnnualResultsMVC.Services
             }
 
         }
-
-        // SP DIVISION CONCAT CASE logic moved to C#
+        //new division logic 
         private string BuildDivision(ExamFinalPublishedResult r)
         {
             try
             {
-                string divPart = (r.ImprovementRemark == "IMPROVED" || r.ImprovementRemark == null) ? r.Division : "";
+                // CASE WHEN IsTotalResultImproved = 1
+                if (r.IsTotalResultImproved == 1)
+                {
+                    string gracePart = (!string.IsNullOrEmpty(r.DivisionGraceMarks))
+                        ? " +" + r.DivisionGraceMarks
+                        : "";
 
-                string gracePart = (!string.IsNullOrEmpty(r.DivisionGraceMarks)) ? " +" + r.DivisionGraceMarks : "";
+                    return $"{r.Division} {r.PassedUnderRegulation}{gracePart} Improved".Trim();
+                }
 
-                string improvePart = (r.ExamType == "IMPROVEMENT" && !string.IsNullOrEmpty(r.ImprovementRemark)) ? " " + r.ImprovementRemark : "";
+                // WHEN IsTotalResultImproved = 0 OR IS NULL
+                if (r.IsTotalResultImproved == 0 || r.IsTotalResultImproved == null)
+                {
+                    return "Not Improved";
+                }
 
-                return $"{divPart} {r.PassedUnderRegulation}{gracePart}{improvePart}".Trim();
+                // ELSE ''
+                return string.Empty;
             }
             catch (Exception ex)
             {
-
                 return string.Empty;
             }
-
         }
+        // SP DIVISION CONCAT CASE logic moved to C#
+        //private string BuildDivision(ExamFinalPublishedResult r)
+        //{
+        //    try
+        //    {
+        //        string divPart = (r.ImprovementRemark == "IMPROVED" || r.ImprovementRemark == null) ? r.Division : "";
+
+        //        string gracePart = (!string.IsNullOrEmpty(r.DivisionGraceMarks)) ? " +" + r.DivisionGraceMarks : "";
+
+        //        string improvePart = (r.ExamType == "IMPROVEMENT" && !string.IsNullOrEmpty(r.ImprovementRemark)) ? " " + r.ImprovementRemark : "";
+
+        //        return $"{divPart} {r.PassedUnderRegulation}{gracePart}{improvePart}".Trim();
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        return string.Empty;
+        //    }
+
+        //}
 
         // SP's IIF and CONCAT TOT_SUB logic moved to C#
         private List<SubjectDetail> FilterSubjects(List<ExamFinalPublishedResult> allRows, string groupName, bool isVocational)
