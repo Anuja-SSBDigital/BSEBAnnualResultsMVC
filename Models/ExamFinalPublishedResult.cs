@@ -47,6 +47,7 @@ namespace BSEBAnnualResultsMVC.Models
         public int? TotalMarks { get; set; }
         public string? TotalMarksInWords { get; set; }
         public bool? IsTotalResultImproved { get; set; }
+        public bool? IsActive { get; set; }
         public string? Division { get; set; }
         public string? IsDivisionGrace { get; set; }
         public string? DivisionGraceMarks { get; set; }
