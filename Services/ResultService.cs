@@ -25,8 +25,7 @@ namespace BSEBAnnualResultsMVC.Services
                 if (!exists) return null;
 
                 // Fetch all rows for this student in ONE DB call
-                var allRows = _db.FinalPublishedResults.Where(r => r.RollCode == rollCode && r.RollNumber == rollNo && r.IsActive == true)
-                    .ToList(); // Single DB hit — no server load
+                var allRows = _db.FinalPublishedResults.Where(r => r.RollCode == rollCode && r.RollNumber == rollNo && r.IsActive == true).ToList(); // Single DB hit — no server load
 
                 // Check CCEMarks (SP logic: IsCCEMarks)
                 int isCCEMarks = allRows.Any(r => r.CCEMarks.HasValue && r.CCEMarks.Value != 0) ? 1 : 0;
@@ -62,7 +61,7 @@ namespace BSEBAnnualResultsMVC.Services
                 var compulsory = FilterSubjects(allRows, "1. अनिवार्य Compulsory", isVocational: false);
                 var elective = FilterSubjects(allRows, "2. ऐच्छिक Elective", isVocational: false);
                 var additional = FilterSubjects(allRows, "3. अतिरिक्त Additional", isVocational: false);
-                var vocational = FilterSubjects(allRows, "Additional subject group Vocational (100 marks)", isVocational: true);
+                var vocational = FilterSubjects(allRows, "4. Additional subject group Vocational (100 marks)", isVocational: true);
 
                 return new ResultViewModel
                 {
