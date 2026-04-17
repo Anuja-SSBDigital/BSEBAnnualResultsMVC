@@ -182,11 +182,22 @@ namespace BSEBAnnualResultsMVC.Services
                 string tot = r.SubjectTotal ?? "";
                 // ✅ SP Branch 2: WHEN CategoryName = 'COMPARTMENTAL'
                 // THEN CONCAT(SubjectTotal, ' ', ISNULL(IsCompartment, ''))
+
+                //backupcode of compartmental
+                //if (string.Equals(r.CategoryName, "COMPARTMENTAL", StringComparison.OrdinalIgnoreCase))
+                //{
+                //    string compartment = !string.IsNullOrEmpty(r.IsCompartment) ? " " + r.IsCompartment : "";
+                //    return $"{tot}{compartment}".Trim();
+                //}
+
                 if (string.Equals(r.CategoryName, "COMPARTMENTAL", StringComparison.OrdinalIgnoreCase))
                 {
+                    string distc = !string.IsNullOrEmpty(r.Dist) ? " " + r.Dist : "";
                     string compartment = !string.IsNullOrEmpty(r.IsCompartment) ? " " + r.IsCompartment : "";
-                    return $"{tot}{compartment}".Trim();
+
+                    return $"{tot}{distc}{compartment}".Trim();
                 }
+
                 string dist = (!string.IsNullOrEmpty(r.Dist)) ? " " + r.Dist : "";
                 string grace = (!string.IsNullOrEmpty(r.PassWithGrace)) ? " " + r.PassWithGrace : "";
 

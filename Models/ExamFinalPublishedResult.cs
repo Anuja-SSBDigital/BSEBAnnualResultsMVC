@@ -16,7 +16,7 @@ namespace BSEBAnnualResultsMVC.Models
         public string? Faculty { get; set; }
         public string? RegistrationNo { get; set; }
         public string? Stu_UniqueId { get; set; }
-        public string? DOB { get; set; }
+        public DateTime? DOB { get; set; }
 
         // Marks fields
         public string? SubjectPaperName { get; set; }
