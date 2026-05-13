@@ -10,7 +10,6 @@ namespace BSEBAnnualResultsMVC.Controllers
         private readonly ResultService _service;
         private readonly ILogger<ResultController> _logger;
 
-        // ✅ Inject service + logger
         public ResultController(ResultService service, ILogger<ResultController> logger)
         {
             _service = service;
@@ -28,7 +27,6 @@ namespace BSEBAnnualResultsMVC.Controllers
                 ViewBag.IsResultAfterScrutiny = true;
                 ViewBag.ResultAfterScrutinyRemarks = HttpContext.Session.GetString("ResultAfterScrutinyRemarks");
 
-                // ✅ FIX — store in a string variable first, then log
                 string remarks = ViewBag.ResultAfterScrutinyRemarks as string ?? "";
                 _logger.LogInformation("Index: Scrutiny remarks loaded from session: {Remarks}", remarks);
 
@@ -70,7 +68,6 @@ namespace BSEBAnnualResultsMVC.Controllers
                 _logger.LogInformation("GetResult: Result found for RollCode: {RollCode}, RollNo: {RollNo}, Student: {StudentName}",
                     rollcode, rollno, result.Student?.NameoftheCandidate);
 
-                // ✅ Log BEFORE serialization to catch crash point
                 _logger.LogInformation("GetResult: Attempting JSON serialization...");
 
                 string json;
@@ -90,21 +87,19 @@ namespace BSEBAnnualResultsMVC.Controllers
 
                 TempData["Result"] = json;
 
-                // ✅ Replace your old check with this
-                bool isScrutiny = result.Student?.IsResultAfterScrutiny == true || result.Student?.IsResultAfterScrutiny == true;
-
-                // More defensive — covers bool?, int, bit mapping issues
                 var scrutinyValue = result.Student?.IsResultAfterScrutiny;
-
                 _logger.LogInformation("GetResult: IsResultAfterScrutiny = {Value}", scrutinyValue);
 
                 if (scrutinyValue.HasValue && scrutinyValue.Value == true)
                 {
                     _logger.LogInformation("GetResult: Scrutiny result detected. Remarks: {Remarks}",
-                    result.Student.ResultAfterScrutinyRemarks);
-                    TempData["IsResultAfterScrutiny"] = true;
-                    TempData["ResultAfterScrutinyRemarks"] = result.Student.ResultAfterScrutinyRemarks;
+                        result.Student.ResultAfterScrutinyRemarks);
+
+                    // ✅ FIX: Write to Session (not TempData) so Index() can read it after redirect
+                    HttpContext.Session.SetString("IsResultAfterScrutiny", "true");
+                    HttpContext.Session.SetString("ResultAfterScrutinyRemarks", result.Student.ResultAfterScrutinyRemarks ?? "");
                 }
+
                 _logger.LogInformation("GetResult: Redirecting to ShowResult...");
                 return RedirectToAction("ShowResult");
             }
@@ -138,12 +133,12 @@ namespace BSEBAnnualResultsMVC.Controllers
                 _logger.LogInformation("ShowResult: Displaying result for Student: {StudentName}, RollNo: {RollNo}",
                     result?.Student?.NameoftheCandidate, result?.Student?.RollNo);
 
-                // ✅ Read scrutiny from Session and pass to ViewBag for ShowResult view too
-                var isScrutiny = HttpContext.Session.GetString("IsResultAfterScrutiny");
-                if (isScrutiny == "true")
+                // ✅ FIX: Read directly from deserialized result model — no session needed here
+                if (result?.Student?.IsResultAfterScrutiny == true)
                 {
                     ViewBag.IsResultAfterScrutiny = true;
-                    ViewBag.ResultAfterScrutinyRemarks = HttpContext.Session.GetString("ResultAfterScrutinyRemarks");
+                    ViewBag.ResultAfterScrutinyRemarks = result.Student.ResultAfterScrutinyRemarks;
+                    _logger.LogInformation("ShowResult: Scrutiny remarks set in ViewBag: {Remarks}", result.Student.ResultAfterScrutinyRemarks);
                 }
 
                 return View(result);

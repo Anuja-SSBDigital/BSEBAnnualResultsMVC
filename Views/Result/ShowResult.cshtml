@@ -512,6 +512,12 @@
                             <h3 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">Bihar School Examination Board</h3>
                             <p style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">RESULT</p>
                             <h4 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">INTERMEDIATE ANNUAL EXAMINATION-2026</h4>
+                            @if (ViewBag.IsResultAfterScrutiny != null && (bool)ViewBag.IsResultAfterScrutiny == true)
+                            {
+                                <p class="subtitle">
+                                    @ViewBag.ResultAfterScrutinyRemarks
+                                </p>
+                            }
                         </td>
                     </tr>
                 </table>
