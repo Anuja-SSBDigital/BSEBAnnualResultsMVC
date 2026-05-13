@@ -56,7 +56,7 @@ namespace BSEBAnnualResultsMVC.Services
                     DIVISION = division,
                     IsCCEMarks = isCCEMarks,
                     ResultAfterScrutinyRemarks = first.ResultAfterScrutinyRemarks,
-                    IsResultAfterScrutiny = first.IsResultAfterScrutiny
+                    IsResultAfterScrutiny = first.IsResultAfterScrutiny == true
                 };
 
                 // Filter by SubjectGroupName (SP's 4 SELECT queries)

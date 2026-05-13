@@ -83,14 +83,21 @@ namespace BSEBAnnualResultsMVC.Controllers
 
                 TempData["Result"] = json;
 
-                if (result.Student?.IsResultAfterScrutiny == true)
+                // ✅ Replace your old check with this
+                bool isScrutiny = result.Student?.IsResultAfterScrutiny == true || result.Student?.IsResultAfterScrutiny == true;
+
+                // More defensive — covers bool?, int, bit mapping issues
+                var scrutinyValue = result.Student?.IsResultAfterScrutiny;
+
+                _logger.LogInformation("GetResult: IsResultAfterScrutiny = {Value}", scrutinyValue);
+
+                if (scrutinyValue.HasValue && scrutinyValue.Value == true)
                 {
-                    _logger.LogInformation("GetResult: Scrutiny result for RollCode: {RollCode}. Remarks: {Remarks}",
-                        rollcode, result.Student.ResultAfterScrutinyRemarks);
+                    _logger.LogInformation("GetResult: Scrutiny result detected. Remarks: {Remarks}",
+                    result.Student.ResultAfterScrutinyRemarks);
                     TempData["IsResultAfterScrutiny"] = true;
                     TempData["ResultAfterScrutinyRemarks"] = result.Student.ResultAfterScrutinyRemarks;
                 }
-
                 _logger.LogInformation("GetResult: Redirecting to ShowResult...");
                 return RedirectToAction("ShowResult");
             }
