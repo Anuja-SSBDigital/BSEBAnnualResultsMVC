@@ -80,8 +80,7 @@ namespace BSEBAnnualResultsMVC.Controllers
 
                 // ✅ Deserialize back to ResultViewModel
                 var result = JsonSerializer.Deserialize<ResultViewModel>(json);
-                ViewBag.IsResultAfterScrutiny = result?.Student?.IsResultAfterScrutiny;
-                ViewBag.ResultAfterScrutinyRemarks = result?.Student?.ResultAfterScrutinyRemarks;
+            
 
                 return View(result);
             }
