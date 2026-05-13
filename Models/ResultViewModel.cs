@@ -24,6 +24,8 @@
         public string? TotalAggregateMarkinWords { get; set; }
         public string? DIVISION { get; set; }
         public int? IsCCEMarks { get; set; }
+        public bool? IsResultAfterScrutiny { get; set; }
+        public string? ResultAfterScrutinyRemarks { get; set; }
     }
 
     // Subject row (replaces Table[1..4] from SP)
