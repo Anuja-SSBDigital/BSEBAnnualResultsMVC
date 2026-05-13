@@ -258,9 +258,9 @@
                 </div>
                 <h2 class="title">Bihar School Examination Board</h2>
                 <p class="subtitle"><small>RESULT</small> <br><small>INTERMEDIATE ANNUAL EXAMINATION 2026</small></p>
-                @if (ViewBag.IsResultAfterScrutiny == 1)
+                @if (Model?.Student?.IsResultAfterScrutiny == true)
                 {
-                    <p class="subtitle"><strong>@ViewBag.ResultAfterScrutinyRemarks</strong></p>
+                    <p class="subtitle"><strong>@Model.Student.ResultAfterScrutinyRemarks</strong></p>
                 }
                 
             </div>
