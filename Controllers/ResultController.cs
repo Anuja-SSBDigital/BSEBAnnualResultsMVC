@@ -21,22 +21,19 @@ namespace BSEBAnnualResultsMVC.Controllers
         {
             _logger.LogInformation("Index page loaded at {Time}", DateTime.Now);
 
-            var isScrutiny = HttpContext.Session.GetString("IsResultAfterScrutiny");
-            if (isScrutiny == "true")
+            if (TempData["IsResultAfterScrutiny"] != null && (bool)TempData["IsResultAfterScrutiny"] == true)
             {
                 ViewBag.IsResultAfterScrutiny = true;
-                ViewBag.ResultAfterScrutinyRemarks = HttpContext.Session.GetString("ResultAfterScrutinyRemarks");
 
-                string remarks = ViewBag.ResultAfterScrutinyRemarks as string ?? "";
-                _logger.LogInformation("Index: Scrutiny remarks loaded from session: {Remarks}", remarks);
+                // ✅ FIX: store in string variable before passing to LogInformation
+                string remarks = TempData["ResultAfterScrutinyRemarks"] as string ?? "";
+                ViewBag.ResultAfterScrutinyRemarks = remarks;
 
-                HttpContext.Session.Remove("IsResultAfterScrutiny");
-                HttpContext.Session.Remove("ResultAfterScrutinyRemarks");
+                _logger.LogInformation("Index: Scrutiny remarks loaded from TempData: {Remarks}", remarks);
             }
 
             return View();
         }
-
         // POST: /Result/GetResult
         [HttpPost]
         public ActionResult GetResult(string rollcode, string rollno)
@@ -95,9 +92,9 @@ namespace BSEBAnnualResultsMVC.Controllers
                     _logger.LogInformation("GetResult: Scrutiny result detected. Remarks: {Remarks}",
                         result.Student.ResultAfterScrutinyRemarks);
 
-                    // ✅ FIX: Write to Session (not TempData) so Index() can read it after redirect
-                    HttpContext.Session.SetString("IsResultAfterScrutiny", "true");
-                    HttpContext.Session.SetString("ResultAfterScrutinyRemarks", result.Student.ResultAfterScrutinyRemarks ?? "");
+                    // ✅ Store in TempData — survives one redirect to ShowResult
+                    TempData["IsResultAfterScrutiny"] = true;
+                    TempData["ResultAfterScrutinyRemarks"] = result.Student.ResultAfterScrutinyRemarks ?? "";
                 }
 
                 _logger.LogInformation("GetResult: Redirecting to ShowResult...");
@@ -133,12 +130,13 @@ namespace BSEBAnnualResultsMVC.Controllers
                 _logger.LogInformation("ShowResult: Displaying result for Student: {StudentName}, RollNo: {RollNo}",
                     result?.Student?.NameoftheCandidate, result?.Student?.RollNo);
 
-                // ✅ FIX: Read directly from deserialized result model — no session needed here
+                // ✅ Read directly from result model — most reliable, no TempData dependency
                 if (result?.Student?.IsResultAfterScrutiny == true)
                 {
                     ViewBag.IsResultAfterScrutiny = true;
                     ViewBag.ResultAfterScrutinyRemarks = result.Student.ResultAfterScrutinyRemarks;
-                    _logger.LogInformation("ShowResult: Scrutiny remarks set in ViewBag: {Remarks}", result.Student.ResultAfterScrutinyRemarks);
+                    _logger.LogInformation("ShowResult: Scrutiny remarks set in ViewBag: {Remarks}",
+                        result.Student.ResultAfterScrutinyRemarks);
                 }
 
                 return View(result);
