@@ -54,7 +54,9 @@ namespace BSEBAnnualResultsMVC.Services
                     TotalAggregateMarkinNumber = totalAgg,
                     TotalAggregateMarkinWords = first.TotalMarksInWords,
                     DIVISION = division,
-                    IsCCEMarks = isCCEMarks
+                    IsCCEMarks = isCCEMarks,
+                    ResultAfterScrutinyRemarks = first.ResultAfterScrutinyRemarks,
+                    IsResultAfterScrutiny = first.IsResultAfterScrutiny
                 };
 
                 // Filter by SubjectGroupName (SP's 4 SELECT queries)
