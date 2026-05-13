@@ -258,6 +258,11 @@
                 </div>
                 <h2 class="title">Bihar School Examination Board</h2>
                 <p class="subtitle"><small>RESULT</small> <br><small>INTERMEDIATE ANNUAL EXAMINATION 2026</small></p>
+                @if (ViewBag.IsResultAfterScrutiny == true)
+                {
+                    <p class="subtitle"><strong>@ViewBag.ResultAfterScrutinyRemarks</strong></p>
+                }
+                
             </div>
 
             @if (ViewBag.Error != null)
@@ -268,16 +273,12 @@
             @using (Html.BeginForm("GetResult", "Result", FormMethod.Post, new { id = "resultForm" }))
             {
                 <div class="form-group">
-                    <input type="text" name="rollcode" class="form-control"
-                           placeholder="Enter Roll Code" autocomplete="off" required
-                           id="rollcode" maxlength="10" />
+                    <input type="text" name="rollcode" class="form-control" placeholder="Enter Roll Code" autocomplete="off" required id="rollcode" maxlength="10" />
                     <div class="error" id="rollcodeError">Please Enter Roll Code</div>
                 </div>
 
                 <div class="form-group">
-                    <input type="text" name="rollno" class="form-control"
-                           placeholder="Enter Roll Number" autocomplete="off" required
-                           id="rollno" maxlength="10" />
+                    <input type="text" name="rollno" class="form-control" placeholder="Enter Roll Number" autocomplete="off" required id="rollno" maxlength="10" />
                     <div class="error" id="rollnoError">Please Enter Roll Number</div>
                 </div>
 
@@ -287,8 +288,7 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="text" name="captcha" class="form-control"
-                           placeholder="Enter CAPTCHA" autocomplete="off" id="captchaInput" maxlength="6" />
+                    <input type="text" name="captcha" class="form-control"placeholder="Enter CAPTCHA" autocomplete="off" id="captchaInput" maxlength="6" />
                     <div class="error" id="captchaError">Please Enter Correct CAPTCHA</div>
                 </div>
 
