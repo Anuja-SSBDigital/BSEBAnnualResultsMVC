@@ -18,6 +18,11 @@ namespace BSEBAnnualResultsMVC.Controllers
         // GET: /Result/Index
         public ActionResult Index()
         {
+            if (TempData["IsResultAfterScrutiny"] != null)
+            {
+                ViewBag.IsResultAfterScrutiny = TempData["IsResultAfterScrutiny"];
+                ViewBag.ResultAfterScrutinyRemarks = TempData["ResultAfterScrutinyRemarks"];
+            }
             return View();
         }
 
@@ -54,7 +59,11 @@ namespace BSEBAnnualResultsMVC.Controllers
                 //TempData["Result"] = result;
                 // ✅ Serialize to JSON string for TempData
                 TempData["Result"] = JsonSerializer.Serialize(result);
-
+                if (result.Student?.IsResultAfterScrutiny == true)
+                {
+                    TempData["IsResultAfterScrutiny"] = true;
+                    TempData["ResultAfterScrutinyRemarks"] = result.Student.ResultAfterScrutinyRemarks;
+                }
                 return RedirectToAction("ShowResult");
             }
             catch (Exception ex)
