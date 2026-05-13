@@ -55,5 +55,8 @@ namespace BSEBAnnualResultsMVC.Models
         public string? ExamType { get; set; }
         public string? ImprovementRemark { get; set; }
         public string? IsCompartment { get; set; }
+
+        public bool? IsResultAfterScrutiny { get; set; }
+        public string? ResultAfterScrutinyRemarks { get; set; }
     }
 }
