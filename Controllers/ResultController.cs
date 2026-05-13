@@ -22,11 +22,18 @@ namespace BSEBAnnualResultsMVC.Controllers
         {
             _logger.LogInformation("Index page loaded at {Time}", DateTime.Now);
 
-            if (TempData["IsResultAfterScrutiny"] != null)
+            var isScrutiny = HttpContext.Session.GetString("IsResultAfterScrutiny");
+            if (isScrutiny == "true")
             {
-                ViewBag.IsResultAfterScrutiny = TempData["IsResultAfterScrutiny"];
-                ViewBag.ResultAfterScrutinyRemarks = TempData["ResultAfterScrutinyRemarks"];
-                _logger.LogInformation("Scrutiny remarks displayed on Index page.");
+                ViewBag.IsResultAfterScrutiny = true;
+                ViewBag.ResultAfterScrutinyRemarks = HttpContext.Session.GetString("ResultAfterScrutinyRemarks");
+
+                // ✅ FIX — store in a string variable first, then log
+                string remarks = ViewBag.ResultAfterScrutinyRemarks as string ?? "";
+                _logger.LogInformation("Index: Scrutiny remarks loaded from session: {Remarks}", remarks);
+
+                HttpContext.Session.Remove("IsResultAfterScrutiny");
+                HttpContext.Session.Remove("ResultAfterScrutinyRemarks");
             }
 
             return View();
@@ -126,18 +133,24 @@ namespace BSEBAnnualResultsMVC.Controllers
                     return RedirectToAction("Index");
                 }
 
-                // ✅ Deserialize back to ResultViewModel
                 var result = JsonSerializer.Deserialize<ResultViewModel>(json);
 
                 _logger.LogInformation("ShowResult: Displaying result for Student: {StudentName}, RollNo: {RollNo}",
                     result?.Student?.NameoftheCandidate, result?.Student?.RollNo);
+
+                // ✅ Read scrutiny from Session and pass to ViewBag for ShowResult view too
+                var isScrutiny = HttpContext.Session.GetString("IsResultAfterScrutiny");
+                if (isScrutiny == "true")
+                {
+                    ViewBag.IsResultAfterScrutiny = true;
+                    ViewBag.ResultAfterScrutinyRemarks = HttpContext.Session.GetString("ResultAfterScrutinyRemarks");
+                }
 
                 return View(result);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "ShowResult: Unhandled exception while loading result page.");
-
                 TempData["SwalType"] = "error";
                 TempData["SwalTitle"] = "Server Error";
                 TempData["SwalMessage"] = "An unexpected error occurred. Please try again later.";
