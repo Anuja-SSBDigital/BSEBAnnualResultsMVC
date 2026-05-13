@@ -54,6 +54,7 @@ namespace BSEBAnnualResultsMVC.Controllers
                 //TempData["Result"] = result;
                 // ✅ Serialize to JSON string for TempData
                 TempData["Result"] = JsonSerializer.Serialize(result);
+
                 return RedirectToAction("ShowResult");
             }
             catch (Exception ex)
@@ -79,6 +80,9 @@ namespace BSEBAnnualResultsMVC.Controllers
 
                 // ✅ Deserialize back to ResultViewModel
                 var result = JsonSerializer.Deserialize<ResultViewModel>(json);
+                ViewBag.IsResultAfterScrutiny = result?.Student?.IsResultAfterScrutiny;
+                ViewBag.ResultAfterScrutinyRemarks = result?.Student?.ResultAfterScrutinyRemarks;
+
                 return View(result);
             }
             catch (Exception ex)
