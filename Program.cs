@@ -4,8 +4,7 @@ using BSEBAnnualResultsMVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Logging is already registered by default in ASP.NET Core
-// But you can configure it explicitly here:
+// ✅ Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
@@ -20,16 +19,25 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // ✅ Register ResultService
 builder.Services.AddScoped<ResultService>();
 
+// ✅ Session MUST be registered in services BEFORE app.Build()
+builder.Services.AddDistributedMemoryCache(); // Required for session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
-// ✅ Get logger for Program.cs startup logs
+// ✅ Get logger for startup logs
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 try
 {
     logger.LogInformation("Application starting up at {Time}", DateTime.Now);
 
-    // ✅ Optional: Test DB connection at startup
+    // ✅ Test DB connection at startup
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -39,7 +47,7 @@ try
             logger.LogWarning("Database connection FAILED. Check connection string.");
     }
 
-    // Middleware
+    // Middleware pipeline — ORDER MATTERS
     if (!app.Environment.IsDevelopment())
     {
         app.UseExceptionHandler("/Home/Error");
@@ -49,6 +57,10 @@ try
     app.UseHttpsRedirection();
     app.UseStaticFiles();
     app.UseRouting();
+
+    // ✅ Session MUST come after UseRouting and before UseAuthorization
+    app.UseSession();
+
     app.UseAuthorization();
 
     // Routing
@@ -66,3 +78,9 @@ catch (Exception ex)
     logger.LogCritical(ex, "Application failed to start.");
     throw;
 }
+
+// ✅ Catch fatal unhandled exceptions
+AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+{
+    logger.LogCritical("FATAL UNHANDLED EXCEPTION: {Error}", e.ExceptionObject?.ToString());
+};
