@@ -511,7 +511,7 @@
                         <td style="border:1px solid #000; text-align:center;">
                             <h3 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">Bihar School Examination Board</h3>
                             <p style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">RESULT</p>
-                           
+                            @* <p class="subtitle"><small>RESULT</small> <br><small>INTERMEDIATE ANNUAL EXAMINATION 2026</small></p> *@
                             @if (ViewBag.ExamType != null && ViewBag.ExamType == "COMPARTMENTAL")
                             {
                                 <h4 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">INTERMEDIATE COMPARTMENTAL EXAMINATION-2026</h4>
@@ -519,7 +519,7 @@
                             }
                             else
                             {
-                                <h4 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">ANNUAL EXAMINATION-2026</h4>
+                                <h4 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">INTERMEDIATE SPECIAL EXAMINATION-2026</h4>
                             }
                             @if (ViewBag.IsResultAfterScrutiny != null && (bool)ViewBag.IsResultAfterScrutiny == true)
                             {
