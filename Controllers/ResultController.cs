@@ -19,19 +19,6 @@ namespace BSEBAnnualResultsMVC.Controllers
         // GET: /Result/Index
         public ActionResult Index()
         {
-            //_logger.LogInformation("Index page loaded at {Time}", DateTime.Now);
-
-            //if (TempData["IsResultAfterScrutiny"] != null && (bool)TempData["IsResultAfterScrutiny"] == true)
-            //{
-            //    ViewBag.IsResultAfterScrutiny = true;
-
-            //    // ✅ FIX: store in string variable before passing to LogInformation
-            //    string remarks = TempData["ResultAfterScrutinyRemarks"] as string ?? "";
-            //    ViewBag.ResultAfterScrutinyRemarks = remarks;
-
-            //    _logger.LogInformation("Index: Scrutiny remarks loaded from TempData: {Remarks}", remarks);
-            //}
-
             return View();
         }
         // POST: /Result/GetResult
@@ -126,7 +113,7 @@ namespace BSEBAnnualResultsMVC.Controllers
                 }
 
                 var result = JsonSerializer.Deserialize<ResultViewModel>(json);
-
+                ViewBag.ExamType = result.Student.ExamType;
                 _logger.LogInformation("ShowResult: Displaying result for Student: {StudentName}, RollNo: {RollNo}",
                     result?.Student?.NameoftheCandidate, result?.Student?.RollNo);
 
