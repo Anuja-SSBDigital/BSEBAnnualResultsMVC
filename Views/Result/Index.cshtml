@@ -257,7 +257,17 @@
                     <img src="@Url.Content("~/img/bseorissa-logo-w.png")" alt="BSEB Logo" onerror="this.style.display='none'" style="width:70px" />
                 </div>
                 <h2 class="title">Bihar School Examination Board</h2>
-                <p class="subtitle"><small>RESULT</small> <br><small>INTERMEDIATE ANNUAL EXAMINATION 2026</small></p>
+                @* <p class="subtitle"><small>RESULT</small> <br><small>INTERMEDIATE ANNUAL EXAMINATION 2026</small></p> *@
+
+                @if (ViewBag.ExamType != null && ViewBag.ExamType == "COMPARTMENTAL")
+                {
+                    <h4 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">INTERMEDIATE COMPARTMENTAL EXAMINATION-2026</h4>
+
+                }
+                else
+                {
+                    <h4 style="margin: 5px; font-size: 18px; font-weight: 700; color: #000; font-family: arial;">ANNUAL EXAMINATION-2026</h4>
+                }
                 @if (ViewBag.IsResultAfterScrutiny != null && (bool)ViewBag.IsResultAfterScrutiny == true)
                 {
                     <p class="subtitle"><h3> @ViewBag.ResultAfterScrutinyRemarks </h3></p>
